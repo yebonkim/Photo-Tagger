@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PhotoTagger</string>
+    <string name="nameTitle">이름 : </string>
+    <string name="sizeTitle">크기 : </string>
+    <string name="locationTitle">위치 : </string>
+    <string name="tagTitle">태그 : </string>
 </resources>
