@@ -1,7 +1,7 @@
 package com.example.phototagger;
 
 /**
- * Created by yebonkim on 2018. 8. 9..
+ * Created by yebonkim on 15/12/2018.
  */
 
 public interface RecyclerViewHolder {
