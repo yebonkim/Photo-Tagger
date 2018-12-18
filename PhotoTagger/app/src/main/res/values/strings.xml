@@ -4,4 +4,11 @@
     <string name="sizeTitle">크기 : </string>
     <string name="locationTitle">위치 : </string>
     <string name="tagTitle">태그 : </string>
+    <string name="slideAction">slide</string>
+    <string name="calendarAction">calendar</string>
+    <string name="searchAction">search</string>
+    <string name="editAction">edit</string>
+    <string name="doneAction">done</string>
+    <string name="timeAction">time</string>
+    <string name="cancelAction">cancel</string>
 </resources>

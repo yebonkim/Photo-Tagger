@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/ptPink"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/white"
+        />
+
     <ImageView
         android:id="@+id/imageV"
         android:layout_width="match_parent"
@@ -13,7 +25,8 @@
         android:layout_centerInParent="true"
         android:scaleType="fitCenter"
         android:src="@drawable/img_placeholder"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/infoLayout"
@@ -31,7 +44,9 @@
             android:layout_height="wrap_content"
             android:text="@string/nameTitle"
             android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold"
+            />
 
         <EditText
             android:id="@+id/nameETV"
@@ -44,23 +59,49 @@
             />
 
         <TextView
-            android:id="@+id/sizeTV"
-            android:layout_width="match_parent"
+            android:id="@+id/sizeTitleTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/sizeTitle"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/nameETV" />
 
         <TextView
-            android:id="@+id/locationTV"
-            android:layout_width="match_parent"
+            android:id="@+id/sizeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/sizeTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toRightOf="@id/sizeTitleTV"
+            app:layout_constraintTop_toBottomOf="@id/nameETV" />
+
+        <TextView
+            android:id="@+id/locationTitleTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/locationTitle"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/sizeTV" />
+
+        <TextView
+            android:id="@+id/locationTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/locationTitle"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toRightOf="@id/locationTitleTV"
             app:layout_constraintTop_toBottomOf="@id/sizeTV" />
 
         <TextView
@@ -82,7 +123,16 @@
             android:textSize="15sp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toRightOf="@id/tagTitleTV"
-            app:layout_constraintTop_toTopOf="@id/tagTitleTV" />
+            app:layout_constraintTop_toTopOf="@id/tagTitleTV"
+            android:completionThreshold="2"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/assignedTagRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tagAutoCompleteTV"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
     </android.support.constraint.ConstraintLayout>
 

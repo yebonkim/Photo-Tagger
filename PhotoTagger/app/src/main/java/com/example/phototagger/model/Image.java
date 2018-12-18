@@ -15,11 +15,14 @@ public class Image implements Parcelable{
     private String location;
     private String width;
     private String height;
-    private ArrayList<String> tag;
+    private ArrayList<String> tag = new ArrayList<>();
 
-    public Image(String title, String location) {
-        this.title = title;
+    public Image(String location, String width, String height) {
         this.location = location;
+        this.width = width;
+        this.height = height;
+        this.tag.add("Bear");
+        this.tag.add("Brown");
     }
 
     protected Image(Parcel in) {

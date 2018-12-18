@@ -2,6 +2,8 @@ package com.example.phototagger.main;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,10 +17,12 @@ import com.example.phototagger.R;
 import com.example.phototagger.RecyclerViewHolder;
 import com.example.phototagger.model.Gallery;
 
+import java.lang.invoke.ConstantCallSite;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by yebonkim on 15/12/2018.
@@ -29,12 +33,15 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     Activity activity;
     ArrayList<Gallery> galleries;
+    Drawable upImg, downImg;
 
     public GalleryAdapter(Activity activity, ArrayList<Gallery> galleries) {
         setHasStableIds(true);
 
         this.activity = activity;
         this.galleries = galleries;
+        upImg = activity.getResources().getDrawable(R.drawable.ic_up);
+        downImg = activity.getResources().getDrawable(R.drawable.ic_down);
     }
 
     @Override
@@ -74,10 +81,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView galleryNameTV;
         @BindView(R.id.galleryRV)
         RecyclerView galleryRV;
+        @BindView(R.id.titleLayout)
+        ConstraintLayout titleLayout;
+        @BindView(R.id.arrowIV)
+        ImageView arrowIV;
+
 
         View view;
         Context context;
         ImageAdapter adapter;
+        boolean isPhotoVisible = true;
 
         public GalleryView(View view) {
             super(view);
@@ -92,6 +105,20 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             galleryRV.setLayoutManager(new GridLayoutManager(context, 3));
             galleryRV.setAdapter(adapter);
             galleryNameTV.setText(galleries.get(position).getTitle());
+            titleLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(isPhotoVisible) {
+                        galleryRV.setVisibility(View.GONE);
+                        arrowIV.setBackground(upImg);
+                    } else {
+                        galleryRV.setVisibility(View.VISIBLE);
+                        arrowIV.setBackground(downImg);
+                    }
+
+                    isPhotoVisible = !isPhotoVisible;
+                }
+            });
         }
     }
 }

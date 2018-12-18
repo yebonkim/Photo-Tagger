@@ -1,7 +1,9 @@
 package com.example.phototagger.main;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -12,13 +14,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.example.phototagger.R;
+import com.example.phototagger.common.IntentConstant;
 import com.example.phototagger.common.PermissionList;
 import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
+import com.example.phototagger.slide.SlideActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,8 +41,10 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.galleryRV)
     RecyclerView galleryRV;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
-    ArrayList<String> allImagePaths;
+    ArrayList<Image> allImages;
     ArrayList<Gallery> galleries;
     GalleryAdapter adapter;
 
@@ -45,9 +54,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getString(R.string.app_name));
+
         if(getPermission()) {
-            allImagePaths = getAllShownImagesPath();
-            galleries = splitByAlbum(allImagePaths);
+            allImages = getAllImages();
+            galleries = splitByAlbum(getAllImages());
             setRecyclerView();
         }
     }
@@ -58,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         galleryRV.setAdapter(adapter);
     }
 
-    protected ArrayList<Gallery> splitByAlbum(ArrayList<String> allImagePaths) {
+    protected ArrayList<Gallery> splitByAlbum(ArrayList<Image> allImages) {
         ArrayList<Gallery> results = new ArrayList<>();
         StringTokenizer stk;
         String preToken = "";
@@ -66,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
         Gallery newGallery;
         boolean isAlreadyContained;
 
-        for(String path : allImagePaths) {
-            stk = new StringTokenizer(path, "/");
+        for(Image image : allImages) {
+            stk = new StringTokenizer(image.getLocation(), "/");
             token = stk.nextElement();
             isAlreadyContained = false;
             while(true) {
@@ -79,13 +91,15 @@ public class MainActivity extends AppCompatActivity {
             for(Gallery gallery : results) {
                 if (gallery.getTitle().equals(preToken)) {
                     isAlreadyContained = true;
-                    gallery.addImage(new Image(token.toString(), path));
+                    image.setTitle(token.toString());
+                    gallery.addImage(image);
                     break;
                 }
             }
             if(isAlreadyContained == false) {
                 newGallery = new Gallery(preToken);
-                newGallery.addImage(new Image(token.toString(), path));
+                image.setTitle(token.toString());
+                newGallery.addImage(image);
                 results.add(newGallery);
             }
         }
@@ -118,26 +132,58 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private ArrayList<String> getAllShownImagesPath() {
+    private ArrayList<Image> getAllImages() {
         Uri uri;
         Cursor cursor;
-        int column_index_data;
-        ArrayList<String> listOfAllImages = new ArrayList<String>();
-        String absolutePathOfImage = null;
+        int pathIdx, widthIdx, heightIdx;
+        ArrayList<Image> listOfAllImages = new ArrayList<Image>();
+        Image newImage = null;
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = { MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.HEIGHT,
+                MediaStore.Images.Media.WIDTH};
 
         cursor = getContentResolver().query(uri, projection, null,
                 null, null);
 
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        pathIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        widthIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH);
+        heightIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT);
         while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
-
-            listOfAllImages.add(absolutePathOfImage);
+            newImage = new Image(cursor.getString(pathIdx), cursor.getString(widthIdx), cursor.getString(heightIdx));
+            listOfAllImages.add(newImage);
         }
         return listOfAllImages;
+    }
+
+    protected void goToSlideActivity() {
+        Intent i = new Intent(this, SlideActivity.class);
+        i.putExtra(IntentConstant.GALLERY, galleries.get(0));
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_slide:
+                // User chose the "Settings" item, show the app settings UI...
+                goToSlideActivity();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }

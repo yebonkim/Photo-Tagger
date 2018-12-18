@@ -3,6 +3,7 @@
     package="com.example.phototagger">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -21,7 +22,10 @@
 
         <activity android:name=".detail.DetailActivity">
         </activity>
-        <activity android:name=".detail.DetailEditActivity">
+        <activity android:name=".slide.SlideActivity"></activity>
+        <activity android:name=".detail.DetailEditActivity"
+            android:windowSoftInputMode="adjustPan"
+            >
         </activity>
     </application>
 
