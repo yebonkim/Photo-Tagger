@@ -6,4 +6,4 @@
 
 [메인 모듈](https://github.com/AUSG/aws-architecture-study-A-2019/tree/master/yebon/architecture-1)
 
-** 자세한 리드미는 메인 모듈을 참조해 주세요! **
+**자세한 리드미는 메인 모듈을 참조해 주세요!**
