@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -39,8 +40,8 @@ import butterknife.ButterKnife;
  */
 
 public class MainActivity extends AppCompatActivity {
-    @BindView(R.id.galleryRV)
-    RecyclerView galleryRV;
+    @BindView(R.id.galleryList)
+    RecyclerView galleryList;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -57,20 +58,20 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
-        if(getPermission()) {
+        if(isPermitted()) {
             allImages = getAllImages();
             galleries = splitByAlbum(getAllImages());
             setRecyclerView();
         }
     }
 
-    protected void setRecyclerView() {
+    private void setRecyclerView() {
         adapter = new GalleryAdapter(this, galleries);
-        galleryRV.setLayoutManager(new LinearLayoutManager(this));
-        galleryRV.setAdapter(adapter);
+        galleryList.setLayoutManager(new LinearLayoutManager(this));
+        galleryList.setAdapter(adapter);
     }
 
-    protected ArrayList<Gallery> splitByAlbum(ArrayList<Image> allImages) {
+    private ArrayList<Gallery> splitByAlbum(@NonNull ArrayList<Image> allImages) {
         ArrayList<Gallery> results = new ArrayList<>();
         StringTokenizer stk;
         String preToken = "";
@@ -82,12 +83,14 @@ public class MainActivity extends AppCompatActivity {
             stk = new StringTokenizer(image.getLocation(), "/");
             token = stk.nextElement();
             isAlreadyContained = false;
+
             while(true) {
                 preToken = token.toString();
                 token = stk.nextElement();
                 if(stk.hasMoreElements() == false)
                     break;
             }
+
             for(Gallery gallery : results) {
                 if (gallery.getTitle().equals(preToken)) {
                     isAlreadyContained = true;
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
+
             if(isAlreadyContained == false) {
                 newGallery = new Gallery(preToken);
                 image.setTitle(token.toString());
@@ -108,15 +112,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public boolean getPermission() {
+    private boolean isPermitted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //마시멜로 이상버전에서만
             return checkAndRequestPermission();
         }
         return true;
     }
 
-    public boolean checkAndRequestPermission() {
+    private boolean checkAndRequestPermission() {
         int result;
 
         String[] permissionList = PermissionList.PERMISSION_LIST;
@@ -137,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor;
         int pathIdx, widthIdx, heightIdx;
         ArrayList<Image> listOfAllImages = new ArrayList<Image>();
-        Image newImage = null;
+        Image newImage;
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = { MediaStore.MediaColumns.DATA,
@@ -150,14 +153,16 @@ public class MainActivity extends AppCompatActivity {
         pathIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         widthIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH);
         heightIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT);
+
         while (cursor.moveToNext()) {
             newImage = new Image(cursor.getString(pathIdx), cursor.getString(widthIdx), cursor.getString(heightIdx));
             listOfAllImages.add(newImage);
         }
+
         return listOfAllImages;
     }
 
-    protected void goToSlideActivity() {
+    private void goToSlideActivity() {
         Intent i = new Intent(this, SlideActivity.class);
         i.putExtra(IntentConstant.GALLERY, galleries.get(0));
         startActivity(i);
@@ -175,13 +180,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_slide:
-                // User chose the "Settings" item, show the app settings UI...
                 goToSlideActivity();
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
