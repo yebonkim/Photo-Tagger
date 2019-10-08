@@ -6,6 +6,7 @@
 
     <color name="ptGreen">#4EA17A</color>
     <color name="ptPink">#FF4081</color>
+    <color name="ptPinkDark">#CC3E6F</color>
 
     <color name="backgroundGray">#cccccc</color>
     <color name="transparencyBlack">#aa000000</color>

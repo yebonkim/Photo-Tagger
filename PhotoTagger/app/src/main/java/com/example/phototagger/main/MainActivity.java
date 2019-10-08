@@ -3,10 +3,8 @@ package com.example.phototagger.main;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,10 +14,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import com.example.phototagger.R;
 import com.example.phototagger.common.IntentConstant;
@@ -28,12 +26,12 @@ import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
 import com.example.phototagger.slide.SlideActivity;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by yebonkim on 15/12/2018.
@@ -44,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView galleryList;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.galleryChangeText)
+    TextView galleryChange;
 
     ArrayList<Image> allImages;
     ArrayList<Gallery> galleries;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getString(R.string.app_name));
+        getSupportActionBar().setTitle("");
 
         if(isPermitted()) {
             allImages = getAllImages();
@@ -167,6 +167,26 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(IntentConstant.GALLERY, galleries.get(0));
         startActivity(i);
         finish();
+    }
+
+    @OnClick(R.id.galleryChange)
+    public void popUpGalleryChangeMenu() {
+        PopupMenu menu = new PopupMenu(getApplicationContext(), galleryChange);
+        getMenuInflater().inflate(R.menu.toolbar_title_menu, menu.getMenu());
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_all:
+                        break;
+                    case R.id.menu_photo_tagger:
+                        break;
+                }
+                galleryChange.setText(item.getTitle());
+                return false;
+            }
+        });
+        menu.show();
     }
 
     @Override

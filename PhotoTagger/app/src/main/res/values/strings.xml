@@ -11,4 +11,7 @@
     <string name="doneAction">done</string>
     <string name="timeAction">time</string>
     <string name="cancelAction">cancel</string>
+
+    <string name="allGallery">전체 갤러리</string>
+    <string name="photoTaggerGallery">PhotoTagger 갤러리</string>
 </resources>
