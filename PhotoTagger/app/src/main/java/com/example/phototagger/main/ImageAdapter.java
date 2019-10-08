@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -77,6 +79,8 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ImageView imageV;
         @BindView(R.id.nameTV)
         TextView nameTV;
+        @BindView(R.id.checkbox)
+        CheckBox checkBox;
 
         View view;
         Context context;
@@ -100,6 +104,16 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     i.putExtra(IntentConstant.IMAGE_POSITION, position);
                     activity.startActivity(i);
                     activity.finish();
+                }
+            });
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if (isChecked) {
+
+                    } else {
+
+                    }
                 }
             });
         }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black"
@@ -18,18 +17,42 @@
         android:src="@drawable/img_placeholder"
         />
 
-    <TextView
-        android:id="@+id/nameTV"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="PhotoName"
-        android:gravity="center_vertical"
-        android:paddingLeft="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/transparencyBlack"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/nameTV"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="PhotoName"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/checkbox"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/nameTV"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="10dp"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:background="@color/white"
+            />
+
+    </android.support.constraint.ConstraintLayout>
 
 
 
