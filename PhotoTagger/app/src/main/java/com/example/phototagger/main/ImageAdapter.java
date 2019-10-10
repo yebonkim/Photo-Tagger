@@ -16,10 +16,12 @@ import com.bumptech.glide.Glide;
 import com.example.phototagger.R;
 import com.example.phototagger.RecyclerViewHolder;
 import com.example.phototagger.common.IntentConstant;
+import com.example.phototagger.common.S3Utils;
 import com.example.phototagger.detail.DetailActivity;
 import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -83,19 +85,19 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         CheckBox checkBox;
 
         View view;
-        Context context;
+        Context mContext;
 
         public MyImageView(View view) {
             super(view);
             this.view = view;
-            context =view.getContext();
+            mContext =view.getContext();
             ButterKnife.bind(this, view);
         }
 
         @Override
         public void setData(final int position) {
             nameTV.setText(gallery.getImages().get(position).getTitle());
-            Glide.with(context).load(gallery.getImages().get(position).getLocation()).into(imageV);
+            Glide.with(mContext).load(gallery.getImages().get(position).getLocation()).into(imageV);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,9 +112,9 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
-
+                        S3Utils.uploadFile(mContext, new File(gallery.getImages().get(position).getLocation()));
                     } else {
-
+                        S3Utils.deleteFile(new File(gallery.getImages().get(position).getLocation()));
                     }
                 }
             });

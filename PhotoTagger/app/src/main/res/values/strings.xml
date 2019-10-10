@@ -14,4 +14,6 @@
 
     <string name="allGallery">전체 갤러리</string>
     <string name="photoTaggerGallery">PhotoTagger 갤러리</string>
+
+    <string name="uploadCompleted">이미지 업로드가 완료되었습니다.</string>
 </resources>

@@ -1,0 +1,22 @@
+{
+  "Version": "1.0",
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "Your Cognito Pool Id",
+        "Region": "Your Cognito region"
+      }
+    }
+  },
+  "IdentityManager": {
+    "Default": {
+
+    }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "Your S3 bucket name",
+      "Region": "Your s3 bucket region"
+    }
+  }
+}
