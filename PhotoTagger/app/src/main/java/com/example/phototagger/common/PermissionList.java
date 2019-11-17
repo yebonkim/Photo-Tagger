@@ -7,9 +7,8 @@ import android.Manifest;
  */
 
 public class PermissionList {
-
     // Permission List
-    public static String[] PERMISSION_LIST = {
+    public final static String[] PERMISSION_LIST = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };

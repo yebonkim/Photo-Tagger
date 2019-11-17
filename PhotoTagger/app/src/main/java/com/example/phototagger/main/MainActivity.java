@@ -38,16 +38,16 @@ import butterknife.OnClick;
  */
 
 public class MainActivity extends AppCompatActivity {
-    @BindView(R.id.galleryList)
-    RecyclerView galleryList;
+    @BindView(R.id.list_gallery)
+    RecyclerView mGalleryList;
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.galleryChangeText)
-    TextView galleryChange;
+    Toolbar mToolbar;
+    @BindView(R.id.text_gallery_name)
+    TextView mGalleryName;
 
-    ArrayList<Image> allImages;
-    ArrayList<Gallery> galleries;
-    GalleryAdapter adapter;
+    private ArrayList<Image> mAllImages;
+    private ArrayList<Gallery> mGalleries;
+    private GalleryAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,20 +55,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");
 
         if(isPermitted()) {
-            allImages = getAllImages();
-            galleries = splitByAlbum(getAllImages());
+            mAllImages = getAllImages();
+            mGalleries = splitByAlbum(mAllImages);
             setRecyclerView();
         }
     }
 
     private void setRecyclerView() {
-        adapter = new GalleryAdapter(this, galleries);
-        galleryList.setLayoutManager(new LinearLayoutManager(this));
-        galleryList.setAdapter(adapter);
+        mAdapter = new GalleryAdapter(mGalleries);
+        mGalleryList.setLayoutManager(new LinearLayoutManager(this));
+        mGalleryList.setAdapter(mAdapter);
     }
 
     private ArrayList<Gallery> splitByAlbum(@NonNull ArrayList<Image> allImages) {
@@ -164,14 +164,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToSlideActivity() {
         Intent i = new Intent(this, SlideActivity.class);
-        i.putExtra(IntentConstant.GALLERY, galleries.get(0));
+        i.putExtra(IntentConstant.GALLERY, mGalleries.get(0));
         startActivity(i);
         finish();
     }
 
-    @OnClick(R.id.galleryChange)
+    @OnClick(R.id.layout_gallery_name)
     public void popUpGalleryChangeMenu() {
-        PopupMenu menu = new PopupMenu(getApplicationContext(), galleryChange);
+        PopupMenu menu = new PopupMenu(getApplicationContext(), mGalleryName);
         getMenuInflater().inflate(R.menu.toolbar_title_menu, menu.getMenu());
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menu_photo_tagger:
                         break;
                 }
-                galleryChange.setText(item.getTitle());
+                mGalleryName.setText(item.getTitle());
                 return false;
             }
         });

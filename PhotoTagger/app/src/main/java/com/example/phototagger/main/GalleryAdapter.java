@@ -31,17 +31,12 @@ import butterknife.OnClick;
 public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int VIEW_TYPE_GALLERY = 1;
 
-    Activity activity;
-    ArrayList<Gallery> galleries;
-    Drawable upImg, downImg;
+    ArrayList<Gallery> mGalleries;
 
-    public GalleryAdapter(Activity activity, ArrayList<Gallery> galleries) {
+    public GalleryAdapter(ArrayList<Gallery> galleries) {
         setHasStableIds(true);
 
-        this.activity = activity;
-        this.galleries = galleries;
-        upImg = activity.getResources().getDrawable(R.drawable.ic_up);
-        downImg = activity.getResources().getDrawable(R.drawable.ic_down);
+        this.mGalleries = galleries;
     }
 
     @Override
@@ -73,50 +68,51 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return galleries.size();
+        return mGalleries.size();
     }
 
     public class GalleryView extends RecyclerView.ViewHolder implements RecyclerViewHolder{
-        @BindView(R.id.galleryNameTV)
-        TextView galleryNameTV;
-        @BindView(R.id.galleryRV)
-        RecyclerView galleryRV;
-        @BindView(R.id.titleLayout)
-        ConstraintLayout titleLayout;
-        @BindView(R.id.arrowIV)
-        ImageView arrowIV;
+        @BindView(R.id.text_gallery_name)
+        TextView mGalleryName;
+        @BindView(R.id.list_gallery)
+        RecyclerView mGalleryList;
+        @BindView(R.id.layout_title)
+        ConstraintLayout mTitleLayout;
+        @BindView(R.id.image_arrow)
+        ImageView mArrowImage;
 
-
-        View view;
-        Context context;
-        ImageAdapter adapter;
-        boolean isPhotoVisible = true;
+        private Context mContext;
+        private ImageAdapter mAdapter;
+        private boolean mIsPhotoVisible = true;
+        private Drawable upDrawable, downDrawable;
 
         public GalleryView(View view) {
             super(view);
-            this.view = view;
-            context =view.getContext();
+            mContext =view.getContext();
             ButterKnife.bind(this, view);
+
+            upDrawable = mContext.getResources().getDrawable(R.drawable.ic_up);
+            downDrawable = mContext.getResources().getDrawable(R.drawable.ic_down);
         }
 
         @Override
         public void setData(int position) {
-            adapter = new ImageAdapter(activity, galleries.get(position));
-            galleryRV.setLayoutManager(new GridLayoutManager(context, 3));
-            galleryRV.setAdapter(adapter);
-            galleryNameTV.setText(galleries.get(position).getTitle());
-            titleLayout.setOnClickListener(new View.OnClickListener() {
+            mAdapter = new ImageAdapter(mGalleries.get(position));
+            mGalleryList.setLayoutManager(new GridLayoutManager(mContext, 3));
+            mGalleryList.setAdapter(mAdapter);
+            mGalleryName.setText(mGalleries.get(position).getTitle());
+            mTitleLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(isPhotoVisible) {
-                        galleryRV.setVisibility(View.GONE);
-                        arrowIV.setBackground(upImg);
+                    if(mIsPhotoVisible) {
+                        mGalleryList.setVisibility(View.GONE);
+                        mArrowImage.setBackground(upDrawable);
                     } else {
-                        galleryRV.setVisibility(View.VISIBLE);
-                        arrowIV.setBackground(downImg);
+                        mGalleryList.setVisibility(View.VISIBLE);
+                        mArrowImage.setBackground(downDrawable);
                     }
 
-                    isPhotoVisible = !isPhotoVisible;
+                    mIsPhotoVisible = !mIsPhotoVisible;
                 }
             });
         }

@@ -8,13 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import com.example.phototagger.R;
 import com.example.phototagger.common.IntentConstant;
-import com.example.phototagger.detail.DetailEditActivity;
-import com.example.phototagger.detail.DetailFragment;
-import com.example.phototagger.detail.MainViewPageAdapter;
 import com.example.phototagger.main.MainActivity;
 import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
@@ -23,7 +19,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by yebonkim on 15/12/2018.
@@ -31,16 +26,17 @@ import butterknife.OnClick;
 
 public class SlideActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    Toolbar mToolbar;
     @BindView(R.id.viewPager)
-    ViewPager viewPager;
+    ViewPager mViewPager;
 
-    SlideViewPageAdapter slideViewPageAdapter;
+    private SlideViewPageAdapter mAdapter;
 
-    Gallery gallery;
-    int imageIdx;
-    long slideTime = 1000;
-    Handler mHandler;
+    private long mSlideTime = 1000;
+
+    private Gallery mGallery;
+    private int mImageIdx;
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,47 +44,47 @@ public class SlideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_slide);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         getIntentConstant();
         setViewPager();
-        getSupportActionBar().setTitle(gallery.getTitle());
+        getSupportActionBar().setTitle(mGallery.getTitle());
+
         mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(imageIdx < gallery.getImages().size()-1) {
-                    imageIdx++;
-                    viewPager.setCurrentItem(imageIdx);
-                    mHandler.postDelayed(this, slideTime);
+                if(mImageIdx < mGallery.getImages().size() - 1) {
+                    mImageIdx++;
+                    mViewPager.setCurrentItem(mImageIdx);
+                    mHandler.postDelayed(this, mSlideTime);
                 }
             }
-        }, slideTime);
+        }, mSlideTime);
     }
 
-    protected void getIntentConstant() {
-        gallery = getIntent().getParcelableExtra(IntentConstant.GALLERY);
+    private void getIntentConstant() {
+        mGallery = getIntent().getParcelableExtra(IntentConstant.GALLERY);
     }
 
-    protected void setViewPager() {
-        viewPager.setClipToPadding(false);
-        viewPager.setClipChildren(false);
-        viewPager.setOffscreenPageLimit(5);
-        slideViewPageAdapter = new SlideViewPageAdapter(getSupportFragmentManager(), prepareFragmentList());
-        viewPager.setAdapter(slideViewPageAdapter);
+    private void setViewPager() {
+        mViewPager.setClipToPadding(false);
+        mViewPager.setClipChildren(false);
+        mViewPager.setOffscreenPageLimit(5);
+        mAdapter = new SlideViewPageAdapter(getSupportFragmentManager(), prepareFragmentList());
+        mViewPager.setAdapter(mAdapter);
     }
 
     protected ArrayList<SlideFragment> prepareFragmentList() {
         ArrayList<SlideFragment> result = new ArrayList<>();
-        SlideFragment tmp;
 
-        for(Image image : gallery.getImages()) {
+        for(Image image : mGallery.getImages()) {
             result.add(SlideFragment.newInstance(image));
         }
 
         return result;
     }
 
-    protected void goToMainActivity() {
+    private void goToMainActivity() {
         Intent i = new Intent(SlideActivity.this, MainActivity.class);
         startActivity(i);
         finish();
@@ -100,18 +96,18 @@ public class SlideActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_time:
                 // User chose the "Settings" item, show the app settings UI...
-                if(slideTime == 1000)
-                    slideTime = 3000;
-                else if(slideTime == 3000)
-                    slideTime = 5000;
-                else if(slideTime == 5000)
-                    slideTime = 1000;
+                if(mSlideTime == 1000) {
+                    mSlideTime = 3000;
+                } else if(mSlideTime == 3000) {
+                    mSlideTime = 5000;
+                } else if(mSlideTime == 5000) {
+                    mSlideTime = 1000;
+                }
                 return true;
 
             case R.id.action_cancel:

@@ -13,31 +13,31 @@ import java.util.ArrayList;
  */
 
 public class SlideViewPageAdapter extends FragmentStatePagerAdapter {
+    ArrayList<SlideFragment> mFragmentList;
 
-    ArrayList<SlideFragment> fragmentList;
     public SlideViewPageAdapter(FragmentManager fm, ArrayList<SlideFragment> fragmentList) {
         super(fm);
-        this.fragmentList = fragmentList;
+        this.mFragmentList = fragmentList;
     }
 
     @Override
     public Fragment getItem(int position) {
-        if (position < fragmentList.size()) {
-            return fragmentList.get(position);
+        if (position < mFragmentList.size()) {
+            return mFragmentList.get(position);
         }
         return null;
     }
 
     @Override
     public String getPageTitle(int position) {
-        //not used
-        if (position < fragmentList.size()) {
+        if (position < mFragmentList.size()) {
             return "";
         }
+
         return null;
     }
     @Override
     public int getCount() {
-        return fragmentList.size();
+        return mFragmentList.size();
     }
 }

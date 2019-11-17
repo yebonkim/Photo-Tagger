@@ -25,33 +25,26 @@ import butterknife.ButterKnife;
  *
  * Created by yebonkim on 15/12/2018.
  *
- * A simple {@link Fragment} subclass.
- * Use the {@link DetailFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class DetailFragment extends Fragment {
-    @BindView(R.id.imageV)
-    ImageView imageV;
-    @BindView(R.id.nameTV)
-    TextView nameTV;
-    @BindView(R.id.locationTV)
-    TextView locationTV;
-    @BindView(R.id.sizeTV)
-    TextView sizeTV;
-    @BindView(R.id.tagTV)
-    TextView tagTV;
-    Image image;
+    @BindView(R.id.image)
+    ImageView mImage;
+    @BindView(R.id.text_name)
+    TextView mNameText;
+    @BindView(R.id.text_location)
+    TextView mLocationText;
+    @BindView(R.id.text_size)
+    TextView mSizeText;
+    @BindView(R.id.text_tag)
+    TextView mTagText;
 
-    public DetailFragment() {
-        // Required empty public constructor
-    }
+    private Image mData;
+
+    public DetailFragment() { }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param image Parameter 1.
-     * @return A new instance of fragment FragmentQuiz.
+     * @param image image to show.
+     * @return A new instance of fragment DetailFragment.
      */
     public static DetailFragment newInstance(Image image) {
         DetailFragment fragment = new DetailFragment();
@@ -65,21 +58,21 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            image = getArguments().getParcelable(IntentConstant.IMAGE);
+            mData = getArguments().getParcelable(IntentConstant.IMAGE);
         } else {
-            image = null;
+            mData = null;
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.bind(this, view);
 
-        if(image == null)
+        if(mData == null) {
             getActivity().finish();
+        }
 
         setView();
 
@@ -87,18 +80,19 @@ public class DetailFragment extends Fragment {
     }
 
     protected void setView() {
-        Glide.with(getContext()).load(image.getLocation()).into(imageV);
-        nameTV.setText(image.getTitle());
-        locationTV.setText(image.getLocation());
-        sizeTV.setText(image.getWidth()+" * "+image.getHeight());
-        tagTV.setText(getTagString(image.getTag()));
+        Glide.with(getContext()).load(mData.getLocation()).into(mImage);
+
+        mNameText.setText(mData.getTitle());
+        mLocationText.setText(mData.getLocation());
+        mSizeText.setText(mData.getWidth() + " * " + mData.getHeight());
+        mTagText.setText(getTagString(mData.getTag()));
     }
 
     protected String getTagString(ArrayList<String> tag) {
         String result = "";
 
         for(String tagStr : tag) {
-            result += "#"+tagStr+", ";
+            result += "#" + tagStr + ", ";
         }
 
         return result;

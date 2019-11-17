@@ -11,31 +11,30 @@ import java.util.ArrayList;
  */
 
 public class MainViewPageAdapter extends FragmentStatePagerAdapter {
+    ArrayList<DetailFragment> mFragmentList;
 
-    ArrayList<DetailFragment> fragmentList;
     public MainViewPageAdapter(FragmentManager fm, ArrayList<DetailFragment> fragmentList) {
         super(fm);
-        this.fragmentList = fragmentList;
+        this.mFragmentList = fragmentList;
     }
 
     @Override
     public Fragment getItem(int position) {
-        if (position < fragmentList.size()) {
-            return fragmentList.get(position);
+        if (position < mFragmentList.size()) {
+            return mFragmentList.get(position);
         }
         return null;
     }
 
     @Override
     public String getPageTitle(int position) {
-        //not used
-        if (position < fragmentList.size()) {
+        if (position < mFragmentList.size()) {
             return "";
         }
         return null;
     }
     @Override
     public int getCount() {
-        return fragmentList.size();
+        return mFragmentList.size();
     }
 }

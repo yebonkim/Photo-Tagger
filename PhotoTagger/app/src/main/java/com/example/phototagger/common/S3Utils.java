@@ -20,7 +20,6 @@ import com.example.phototagger.R;
 import java.io.File;
 
 public class S3Utils {
-
     private final static String BUCKET_NAME = "photo-tagger-bony";
     private final static String TAG = S3Utils.class.getSimpleName();
 

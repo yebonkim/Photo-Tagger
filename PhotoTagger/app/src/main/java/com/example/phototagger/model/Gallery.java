@@ -10,23 +10,23 @@ import java.util.ArrayList;
  */
 
 public class Gallery implements Parcelable{
-    private String title;
-    private ArrayList<Image> images;
+    private String mTitle;
+    private ArrayList<Image> mImages;
 
     public Gallery(String title) {
-        this.title = title;
-        this.images = new ArrayList<>();
+        this.mTitle = title;
+        this.mImages = new ArrayList<>();
     }
 
     protected Gallery(Parcel in) {
-        title = in.readString();
-        images = in.createTypedArrayList(Image.CREATOR);
+        mTitle = in.readString();
+        mImages = in.createTypedArrayList(Image.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeTypedList(images);
+        dest.writeString(mTitle);
+        dest.writeTypedList(mImages);
     }
 
     @Override
@@ -47,22 +47,22 @@ public class Gallery implements Parcelable{
     };
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public ArrayList<Image> getImages() {
-        return images;
+        return mImages;
     }
 
     public void setImages(ArrayList<Image> images) {
-        this.images = images;
+        this.mImages = images;
     }
 
     public void addImage(Image image) {
-        this.images.add(image);
+        this.mImages.add(image);
     }
 }

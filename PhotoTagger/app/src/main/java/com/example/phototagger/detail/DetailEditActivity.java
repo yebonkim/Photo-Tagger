@@ -30,20 +30,20 @@ import butterknife.ButterKnife;
 
 public class DetailEditActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.imageV)
-    ImageView imageV;
-    @BindView(R.id.nameETV)
-    EditText nameETV;
-    @BindView(R.id.sizeTV)
-    TextView sizeTV;
-    @BindView(R.id.locationTV)
-    TextView locationTV;
-    @BindView(R.id.tagAutoCompleteTV)
-    AutoCompleteTextView tagTV;
+    Toolbar mToolbar;
+    @BindView(R.id.image)
+    ImageView mImage;
+    @BindView(R.id.edit_name)
+    EditText mNameEditText;
+    @BindView(R.id.text_size)
+    TextView mSizeText;
+    @BindView(R.id.text_location)
+    TextView mLocationTV;
+    @BindView(R.id.text_tag_auto_complete)
+    AutoCompleteTextView mTagText;
 
-    Gallery gallery;
-    int imageIdx;
+    Gallery mGallery;
+    int mImageIdx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,23 +51,25 @@ public class DetailEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_edit);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
-        getIntentConstant();
-        getSupportActionBar().setTitle(gallery.getImages().get(imageIdx).getTitle());
+        setSupportActionBar(mToolbar);
+        getIntentData();
+        getSupportActionBar().setTitle(mGallery.getImages().get(mImageIdx).getTitle());
         setView();
     }
 
-    protected void getIntentConstant() {
-        gallery = getIntent().getParcelableExtra(IntentConstant.GALLERY);
-        imageIdx = getIntent().getIntExtra(IntentConstant.IMAGE_POSITION, 0);
+    protected void getIntentData() {
+        mGallery = getIntent().getParcelableExtra(IntentConstant.GALLERY);
+        mImageIdx = getIntent().getIntExtra(IntentConstant.IMAGE_POSITION, 0);
     }
 
     protected void setView() {
-        Glide.with(this).load(gallery.getImages().get(imageIdx).getLocation()).into(imageV);
-        nameETV.setText(gallery.getImages().get(imageIdx).getTitle());
-        locationTV.setText(gallery.getImages().get(imageIdx).getLocation());
-        sizeTV.setText(gallery.getImages().get(imageIdx).getWidth()+" * "+gallery.getImages().get(imageIdx).getHeight());
-        tagTV.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, toArr(gallery.getImages().get(imageIdx).getTag())));
+        Glide.with(this).load(mGallery.getImages().get(mImageIdx).getLocation()).into(mImage);
+        mNameEditText.setText(mGallery.getImages().get(mImageIdx).getTitle());
+        mLocationTV.setText(mGallery.getImages().get(mImageIdx).getLocation());
+        mSizeText.setText(mGallery.getImages().get(mImageIdx).getWidth() + " * " + mGallery.getImages().get(mImageIdx).getHeight());
+        mTagText.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line,
+                toArr(mGallery.getImages().get(mImageIdx).getTag())));
     }
 
     protected String[] toArr(ArrayList<String> tag) {
@@ -83,8 +85,8 @@ public class DetailEditActivity extends AppCompatActivity {
 
     protected void goToDetailActivity() {
         Intent i = new Intent(DetailEditActivity.this, DetailActivity.class);
-        i.putExtra(IntentConstant.GALLERY, gallery);
-        i.putExtra(IntentConstant.IMAGE_POSITION, imageIdx);
+        i.putExtra(IntentConstant.GALLERY, mGallery);
+        i.putExtra(IntentConstant.IMAGE_POSITION, mImageIdx);
         startActivity(i);
         finish();
     }
@@ -100,8 +102,7 @@ public class DetailEditActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_done:
-                // User chose the "Settings" item, show the app settings UI...
-                gallery.getImages().get(imageIdx).setTitle(nameETV.getText().toString());
+                mGallery.getImages().get(mImageIdx).setTitle(mNameEditText.getText().toString());
                 goToDetailActivity();
                 return true;
 

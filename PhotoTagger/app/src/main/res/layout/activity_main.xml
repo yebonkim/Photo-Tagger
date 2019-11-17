@@ -18,14 +18,14 @@
         app:titleTextColor="@color/white">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/galleryChange"
+            android:id="@+id/layout_gallery_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/pink_rectangle_button"
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/galleryChangeText"
+                android:id="@+id/text_gallery_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/allGallery"
@@ -43,14 +43,14 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/galleryChangeText"
+                app:layout_constraintStart_toEndOf="@id/text_gallery_name"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/galleryList"
+        android:id="@+id/list_gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="55dp"

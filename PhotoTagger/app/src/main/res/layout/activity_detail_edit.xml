@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -13,53 +12,51 @@
         android:background="@color/ptPink"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@color/white"
-        />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white" />
 
     <ImageView
-        android:id="@+id/imageV"
+        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_centerInParent="true"
         android:scaleType="fitCenter"
         android:src="@drawable/img_placeholder"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        />
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/infoLayout"
+        android:id="@+id/layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageV">
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image">
 
         <TextView
-            android:id="@+id/nameTV"
+            android:id="@+id/text_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nameTitle"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/nameETV"
+            android:id="@+id/edit_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@id/nameTV"
-            app:layout_constraintTop_toTopOf="@id/nameTV"
-            android:layout_marginLeft="10dp"
-            app:layout_constraintRight_toRightOf="parent"
-            />
+            android:layout_marginStart="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/text_name"
+            app:layout_constraintTop_toTopOf="@id/text_name" />
 
         <TextView
-            android:id="@+id/sizeTitleTV"
+            android:id="@+id/text_size_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -67,22 +64,23 @@
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/nameETV" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_name" />
 
         <TextView
-            android:id="@+id/sizeTV"
+            android:id="@+id/text_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:text="@string/sizeTitle"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
             android:textSize="15sp"
-            app:layout_constraintLeft_toRightOf="@id/sizeTitleTV"
-            app:layout_constraintTop_toBottomOf="@id/nameETV" />
+            app:layout_constraintStart_toEndOf="@id/text_size_title"
+            app:layout_constraintTop_toBottomOf="@id/edit_name" />
 
         <TextView
-            android:id="@+id/locationTitleTV"
+            android:id="@+id/text_location_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -90,49 +88,50 @@
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/sizeTV" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_size" />
 
         <TextView
-            android:id="@+id/locationTV"
+            android:id="@+id/text_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
             android:text="@string/locationTitle"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:layout_constraintLeft_toRightOf="@id/locationTitleTV"
-            app:layout_constraintTop_toBottomOf="@id/sizeTV" />
+            app:layout_constraintStart_toEndOf="@id/text_location_title"
+            app:layout_constraintTop_toBottomOf="@id/text_size" />
 
         <TextView
-            android:id="@+id/tagTitleTV"
+            android:id="@+id/text_tag_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/tagTitle"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@id/locationTV" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_location" />
 
         <AutoCompleteTextView
-            android:id="@+id/tagAutoCompleteTV"
+            android:id="@+id/text_tag_auto_complete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:completionThreshold="2"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/tagTitleTV"
-            app:layout_constraintTop_toTopOf="@id/tagTitleTV"
-            android:completionThreshold="2"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/text_tag_title"
+            app:layout_constraintTop_toTopOf="@id/text_tag_title" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/assignedTagRV"
+            android:id="@+id/list_assigned_tag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tagAutoCompleteTV"
             app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@id/list_assigned_tag" />
 
     </android.support.constraint.ConstraintLayout>
 

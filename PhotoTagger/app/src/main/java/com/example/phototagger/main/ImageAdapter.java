@@ -32,16 +32,14 @@ import butterknife.ButterKnife;
  */
 
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    public static final int VIEW_TYPE_IMAGE = 1;
+    private final static int VIEW_TYPE_IMAGE = 1;
 
-    Activity activity;
-    Gallery gallery;
+    private Gallery mGallery;
 
-    public ImageAdapter(Activity activity, Gallery gallery) {
+    public ImageAdapter(Gallery gallery) {
         setHasStableIds(true);
 
-        this.activity = activity;
-        this.gallery = gallery;
+        this.mGallery = gallery;
     }
 
     @Override
@@ -73,48 +71,50 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return gallery.getImages().size();
+        return mGallery.getImages().size();
     }
 
     public class MyImageView extends RecyclerView.ViewHolder implements RecyclerViewHolder{
-        @BindView(R.id.imageV)
-        ImageView imageV;
-        @BindView(R.id.nameTV)
-        TextView nameTV;
+        @BindView(R.id.image)
+        ImageView mImage;
+        @BindView(R.id.text_name)
+        TextView mNameText;
         @BindView(R.id.checkbox)
-        CheckBox checkBox;
+        CheckBox mCheckBox;
 
-        View view;
+        View mView;
         Context mContext;
 
         public MyImageView(View view) {
             super(view);
-            this.view = view;
-            mContext =view.getContext();
+            this.mView = view;
+            this.mContext =view.getContext();
+
             ButterKnife.bind(this, view);
         }
 
         @Override
         public void setData(final int position) {
-            nameTV.setText(gallery.getImages().get(position).getTitle());
-            Glide.with(mContext).load(gallery.getImages().get(position).getLocation()).into(imageV);
-            view.setOnClickListener(new View.OnClickListener() {
+            mNameText.setText(mGallery.getImages().get(position).getTitle());
+            Glide.with(mContext).load(mGallery.getImages().get(position).getLocation()).into(mImage);
+
+            mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(activity, DetailActivity.class);
-                    i.putExtra(IntentConstant.GALLERY, gallery);
+                    Intent i = new Intent(mContext, DetailActivity.class);
+                    i.putExtra(IntentConstant.GALLERY, mGallery);
                     i.putExtra(IntentConstant.IMAGE_POSITION, position);
-                    activity.startActivity(i);
-                    activity.finish();
+                    mContext.startActivity(i);
                 }
             });
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
-                        S3Utils.uploadFile(mContext, new File(gallery.getImages().get(position).getLocation()));
+                        S3Utils.uploadFile(mContext, new File(mGallery.getImages().get(position).getLocation()));
                     } else {
-                        S3Utils.deleteFile(new File(gallery.getImages().get(position).getLocation()));
+                        S3Utils.deleteFile(new File(mGallery.getImages().get(position).getLocation()));
                     }
                 }
             });

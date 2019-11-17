@@ -10,37 +10,37 @@ import java.util.ArrayList;
  */
 
 public class Image implements Parcelable{
-    private int id;
-    private String title;
-    private String location;
-    private String width;
-    private String height;
-    private ArrayList<String> tag;
+    private int mId;
+    private String mTitle;
+    private String mLocation;
+    private String mWidth;
+    private String mHeight;
+    private ArrayList<String> mTags;
 
     public Image(String location, String width, String height) {
-        this.location = location;
-        this.width = width;
-        this.height = height;
-        this.tag = new ArrayList<>();
+        this.mLocation = location;
+        this.mWidth = width;
+        this.mHeight = height;
+        this.mTags = new ArrayList<>();
     }
 
     protected Image(Parcel in) {
-        id = in.readInt();
-        title = in.readString();
-        location = in.readString();
-        width = in.readString();
-        height = in.readString();
-        tag = in.createStringArrayList();
+        mId = in.readInt();
+        mTitle = in.readString();
+        mLocation = in.readString();
+        mWidth = in.readString();
+        mHeight = in.readString();
+        mTags = in.createStringArrayList();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(title);
-        dest.writeString(location);
-        dest.writeString(width);
-        dest.writeString(height);
-        dest.writeStringList(tag);
+        dest.writeInt(mId);
+        dest.writeString(mTitle);
+        dest.writeString(mLocation);
+        dest.writeString(mWidth);
+        dest.writeString(mHeight);
+        dest.writeStringList(mTags);
     }
 
     @Override
@@ -61,50 +61,50 @@ public class Image implements Parcelable{
     };
 
     public String getLocation() {
-        return location;
+        return mLocation;
     }
 
     public void setLocation(String location) {
-        this.location = location;
+        this.mLocation = location;
     }
 
     public String getWidth() {
-        return width;
+        return mWidth;
     }
 
     public void setWidth(String width) {
-        this.width = width;
+        this.mWidth = width;
     }
 
     public String getHeight() {
-        return height;
+        return mHeight;
     }
 
     public void setHeight(String height) {
-        this.height = height;
+        this.mHeight = height;
     }
 
     public ArrayList<String> getTag() {
-        return tag;
+        return mTags;
     }
 
     public void setTag(ArrayList<String> tag) {
-        this.tag = tag;
+        this.mTags = tag;
     }
 
     public int getId() {
-        return id;
+        return mId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 }
