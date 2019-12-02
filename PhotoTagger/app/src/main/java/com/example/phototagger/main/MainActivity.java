@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         Object token;
         Gallery newGallery;
         boolean isAlreadyContained;
+        boolean isFirst = true;
 
         for(Image image : allImages) {
             stk = new StringTokenizer(image.getLocation(), "/");
@@ -101,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(isAlreadyContained == false) {
-                newGallery = new Gallery(preToken);
+                newGallery = new Gallery(preToken, isFirst);
+                isFirst = false;
                 image.setTitle(token.toString());
                 newGallery.addImage(image);
                 results.add(newGallery);

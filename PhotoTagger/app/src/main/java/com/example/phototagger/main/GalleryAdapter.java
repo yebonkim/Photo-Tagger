@@ -83,8 +83,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private Context mContext;
         private ImageAdapter mAdapter;
-        private boolean mIsPhotoVisible = true;
         private Drawable upDrawable, downDrawable;
+        private Gallery mGallery;
 
         public GalleryView(View view) {
             super(view);
@@ -93,28 +93,44 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             upDrawable = mContext.getResources().getDrawable(R.drawable.ic_up);
             downDrawable = mContext.getResources().getDrawable(R.drawable.ic_down);
+            mGalleryList.setLayoutManager(new GridLayoutManager(mContext, 3));
         }
 
         @Override
         public void setData(int position) {
-            mAdapter = new ImageAdapter(mGalleries.get(position));
-            mGalleryList.setLayoutManager(new GridLayoutManager(mContext, 3));
+            mGallery = mGalleries.get(position);
+            mAdapter = new ImageAdapter(mGallery);
+
+            if (mGallery.isOpened()) {
+                setOpenedView();
+            } else {
+                setClosedView();
+            }
+
             mGalleryList.setAdapter(mAdapter);
             mGalleryName.setText(mGalleries.get(position).getTitle());
             mTitleLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mIsPhotoVisible) {
-                        mGalleryList.setVisibility(View.GONE);
-                        mArrowImage.setBackground(upDrawable);
+                    if(mGallery.isOpened()) {
+                        setClosedView();
                     } else {
-                        mGalleryList.setVisibility(View.VISIBLE);
-                        mArrowImage.setBackground(downDrawable);
+                        setOpenedView();
                     }
 
-                    mIsPhotoVisible = !mIsPhotoVisible;
+                    mGallery.setIsOpened(!mGallery.isOpened());
                 }
             });
+        }
+
+        private void setOpenedView() {
+            mGalleryList.setVisibility(View.VISIBLE);
+            mArrowImage.setBackground(downDrawable);
+        }
+
+        private void setClosedView() {
+            mGalleryList.setVisibility(View.GONE);
+            mArrowImage.setBackground(upDrawable);
         }
     }
 }

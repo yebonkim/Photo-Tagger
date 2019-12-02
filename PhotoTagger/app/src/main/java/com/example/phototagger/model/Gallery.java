@@ -11,27 +11,26 @@ import java.util.ArrayList;
 
 public class Gallery implements Parcelable{
     private String mTitle;
+    private boolean mIsOpened;
     private ArrayList<Image> mImages;
 
-    public Gallery(String title) {
+    public Gallery(String title, boolean isOpened) {
         this.mTitle = title;
+        this.mIsOpened = isOpened;
         this.mImages = new ArrayList<>();
     }
 
     protected Gallery(Parcel in) {
         mTitle = in.readString();
+        mIsOpened = in.readByte() != 0;
         mImages = in.createTypedArrayList(Image.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mTitle);
+        dest.writeByte((byte) (mIsOpened ? 1 : 0));
         dest.writeTypedList(mImages);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public static final Creator<Gallery> CREATOR = new Creator<Gallery>() {
@@ -45,6 +44,11 @@ public class Gallery implements Parcelable{
             return new Gallery[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     public String getTitle() {
         return mTitle;
@@ -64,5 +68,13 @@ public class Gallery implements Parcelable{
 
     public void addImage(Image image) {
         this.mImages.add(image);
+    }
+
+    public boolean isOpened() {
+        return mIsOpened;
+    }
+
+    public void setIsOpened(boolean isOpened) {
+        this.mIsOpened = isOpened;
     }
 }
