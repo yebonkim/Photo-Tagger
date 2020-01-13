@@ -1,8 +1,8 @@
 package com.example.phototagger.main;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +18,10 @@ import com.example.phototagger.RecyclerViewHolder;
 import com.example.phototagger.common.IntentConstant;
 import com.example.phototagger.common.S3Utils;
 import com.example.phototagger.detail.DetailActivity;
-import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,12 +33,17 @@ import butterknife.ButterKnife;
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int VIEW_TYPE_IMAGE = 1;
 
-    private Gallery mGallery;
+    private List<Image> mImages;
+    private OnPhotoClickListener mOnPhotoClickListener;
 
-    public ImageAdapter(Gallery gallery) {
+    public ImageAdapter(@NonNull List<Image> images, OnPhotoClickListener onPhotoClickListener) {
         setHasStableIds(true);
 
-        this.mGallery = gallery;
+        if (images == null) {
+            throw new IllegalArgumentException();
+        }
+        this.mOnPhotoClickListener = onPhotoClickListener;
+        this.mImages = images;
     }
 
     @Override
@@ -71,7 +75,13 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mGallery.getImages().size();
+        return mImages.size();
+    }
+
+    public void addImagesToGallery(List<Image> moreImages) {
+        int preSize = getItemCount();
+        mImages.addAll(moreImages);
+        notifyItemRangeInserted(preSize, moreImages.size());
     }
 
     public class MyImageView extends RecyclerView.ViewHolder implements RecyclerViewHolder{
@@ -95,16 +105,13 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @Override
         public void setData(final int position) {
-            mNameText.setText(mGallery.getImages().get(position).getTitle());
-            Glide.with(mContext).load(mGallery.getImages().get(position).getLocation()).into(mImage);
+            mNameText.setText(mImages.get(position).getTitle());
+            Glide.with(mContext).load(mImages.get(position).getLocation()).into(mImage);
 
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(mContext, DetailActivity.class);
-                    i.putExtra(IntentConstant.GALLERY, mGallery);
-                    i.putExtra(IntentConstant.IMAGE_POSITION, position);
-                    mContext.startActivity(i);
+                    mOnPhotoClickListener.onPhotoClicked(position);
                 }
             });
 
@@ -112,9 +119,9 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
-                        S3Utils.uploadFile(mContext, new File(mGallery.getImages().get(position).getLocation()));
+                        S3Utils.uploadFile(mContext, new File(mImages.get(position).getLocation()));
                     } else {
-                        S3Utils.deleteFile(new File(mGallery.getImages().get(position).getLocation()));
+                        S3Utils.deleteFile(new File(mImages.get(position).getLocation()));
                     }
                 }
             });
