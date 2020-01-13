@@ -1,5 +1,6 @@
 package com.example.phototagger.main;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,10 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.phototagger.R;
 import com.example.phototagger.common.IntentConstant;
-import com.example.phototagger.common.PermissionList;
 import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
 import com.example.phototagger.slide.SlideActivity;
@@ -38,6 +39,8 @@ import butterknife.OnClick;
  */
 
 public class MainActivity extends AppCompatActivity {
+    private final static String INVALID_GALLERY_NAME = "INVALID_GALLERY_NAME";
+
     @BindView(R.id.list_gallery)
     RecyclerView mGalleryList;
     @BindView(R.id.toolbar)
@@ -45,9 +48,16 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.text_gallery_name)
     TextView mGalleryName;
 
+    private final static String[] PERMISSION_LIST = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     private ArrayList<Image> mAllImages;
     private ArrayList<Gallery> mGalleries;
     private GalleryAdapter mAdapter;
+
+    private PopupMenu mPopupMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");
+        mPopupMenu = new PopupMenu(getApplicationContext(), mGalleryName);
 
-        if(isPermitted()) {
+        if (isPermitted()) {
             mAllImages = getAllImages();
-            mGalleries = splitByAlbum(mAllImages);
+            mGalleries = splitByGallery(mAllImages);
             setRecyclerView();
         }
     }
@@ -71,48 +82,40 @@ public class MainActivity extends AppCompatActivity {
         mGalleryList.setAdapter(mAdapter);
     }
 
-    private ArrayList<Gallery> splitByAlbum(@NonNull ArrayList<Image> allImages) {
-        ArrayList<Gallery> results = new ArrayList<>();
+    private ArrayList<Gallery> splitByGallery(@NonNull ArrayList<Image> allImages) {
+        ArrayList<Gallery> galleries = new ArrayList<>();
         StringTokenizer stk;
-        String preToken = "";
-        Object token;
-        Gallery newGallery;
-        boolean isAlreadyContained;
-        boolean isFirst = true;
+        String preGalleryName = INVALID_GALLERY_NAME;
+        String galleryName = INVALID_GALLERY_NAME;
+        int galleryIdx;
+        Gallery gallery = null;
 
-        for(Image image : allImages) {
+        boolean isFirst = true;     // for opening only first gallery
+        boolean isOtherGallery;
+
+        for (Image image : allImages) {
             stk = new StringTokenizer(image.getLocation(), "/");
-            token = stk.nextElement();
-            isAlreadyContained = false;
+            galleryIdx = stk.countTokens() - 2;
 
-            while(true) {
-                preToken = token.toString();
-                token = stk.nextElement();
-                if(stk.hasMoreElements() == false)
-                    break;
+            for (int i = 0; i <= galleryIdx; i++) {
+                galleryName = stk.nextToken();
             }
 
-            for(Gallery gallery : results) {
-                if (gallery.getTitle().equals(preToken)) {
-                    isAlreadyContained = true;
-                    image.setTitle(token.toString());
-                    gallery.addImage(image);
-                    break;
-                }
-            }
+            isOtherGallery = !preGalleryName.equals(galleryName);
+            preGalleryName = galleryName;
 
-            if(isAlreadyContained == false) {
-                newGallery = new Gallery(preToken, isFirst);
+            if (isOtherGallery) {
+                gallery = new Gallery(preGalleryName, isFirst);
                 isFirst = false;
-                image.setTitle(token.toString());
-                newGallery.addImage(image);
-                results.add(newGallery);
+                galleries.add(gallery);
             }
+
+            image.setTitle(stk.nextToken());
+            gallery.addImage(image);
         }
 
-        return results;
+        return galleries;
     }
-
 
     private boolean isPermitted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -124,12 +127,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean checkAndRequestPermission() {
         int result;
 
-        String[] permissionList = PermissionList.PERMISSION_LIST;
-
-        for (int i = 0; i < permissionList.length; i++) {
-            result = ContextCompat.checkSelfPermission(this, permissionList[i]);
+        for (int i = 0; i < PERMISSION_LIST.length; i++) {
+            result = ContextCompat.checkSelfPermission(this, PERMISSION_LIST[i]);
             if (result != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, permissionList, 1);
+                ActivityCompat.requestPermissions(this, PERMISSION_LIST, 1);
                 return false;
             }
         }
@@ -138,12 +139,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<Image> getAllImages() {
-        Uri uri;
+        Uri uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         Cursor cursor;
-        int pathIdx, widthIdx, heightIdx;
         ArrayList<Image> listOfAllImages = new ArrayList<Image>();
-        Image newImage;
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = { MediaStore.MediaColumns.DATA,
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.HEIGHT,
@@ -152,30 +150,32 @@ public class MainActivity extends AppCompatActivity {
         cursor = getContentResolver().query(uri, projection, null,
                 null, null);
 
-        pathIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        widthIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH);
-        heightIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT);
+        int pathIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        int widthIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH);
+        int heightIdx = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT);
+
+        if (!cursor.moveToFirst()) {
+            return listOfAllImages;
+        }
 
         while (cursor.moveToNext()) {
-            newImage = new Image(cursor.getString(pathIdx), cursor.getString(widthIdx), cursor.getString(heightIdx));
-            listOfAllImages.add(newImage);
+            listOfAllImages.add(new Image(cursor.getString(pathIdx), cursor.getString(widthIdx),
+                    cursor.getString(heightIdx)));
         }
 
         return listOfAllImages;
     }
 
     private void goToSlideActivity() {
-        Intent i = new Intent(this, SlideActivity.class);
-        i.putExtra(IntentConstant.GALLERY, mGalleries.get(0));
-        startActivity(i);
-        finish();
+        Intent intent = new Intent(this, SlideActivity.class);
+        intent.putExtra(IntentConstant.GALLERY, mGalleries.get(0));
+        startActivity(intent);
     }
 
     @OnClick(R.id.layout_gallery_name)
     public void popUpGalleryChangeMenu() {
-        PopupMenu menu = new PopupMenu(getApplicationContext(), mGalleryName);
-        getMenuInflater().inflate(R.menu.toolbar_title_menu, menu.getMenu());
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        getMenuInflater().inflate(R.menu.toolbar_title_menu, mPopupMenu.getMenu());
+        mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        menu.show();
+        mPopupMenu.show();
     }
 
     @Override
@@ -197,17 +197,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_slide:
-                goToSlideActivity();
+                if (mGalleries.size() == 0) {
+                    Toast.makeText(this, R.string.noGallery, Toast.LENGTH_SHORT).show();
+                } else {
+                    goToSlideActivity();
+                }
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
 }

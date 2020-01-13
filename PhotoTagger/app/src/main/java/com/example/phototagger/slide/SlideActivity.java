@@ -53,7 +53,7 @@ public class SlideActivity extends AppCompatActivity {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(mImageIdx < mGallery.getImages().size() - 1) {
+                if (mImageIdx < mGallery.getImages().size() - 1) {
                     mImageIdx++;
                     mViewPager.setCurrentItem(mImageIdx);
                     mHandler.postDelayed(this, mSlideTime);
@@ -77,7 +77,7 @@ public class SlideActivity extends AppCompatActivity {
     protected ArrayList<SlideFragment> prepareFragmentList() {
         ArrayList<SlideFragment> result = new ArrayList<>();
 
-        for(Image image : mGallery.getImages()) {
+        for (Image image : mGallery.getImages()) {
             result.add(SlideFragment.newInstance(image));
         }
 
@@ -85,8 +85,6 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity() {
-        Intent i = new Intent(SlideActivity.this, MainActivity.class);
-        startActivity(i);
         finish();
     }
 
@@ -101,11 +99,11 @@ public class SlideActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_time:
                 // User chose the "Settings" item, show the app settings UI...
-                if(mSlideTime == 1000) {
+                if (mSlideTime == 1000) {
                     mSlideTime = 3000;
-                } else if(mSlideTime == 3000) {
+                } else if (mSlideTime == 3000) {
                     mSlideTime = 5000;
-                } else if(mSlideTime == 5000) {
+                } else if (mSlideTime == 5000) {
                     mSlideTime = 1000;
                 }
                 return true;
@@ -119,7 +117,6 @@ public class SlideActivity extends AppCompatActivity {
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
     }
 }
