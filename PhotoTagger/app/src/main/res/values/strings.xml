@@ -19,6 +19,5 @@
 
     <string name="noGallery">갤러리가 없어요.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_search">사진 검색</string>
 </resources>

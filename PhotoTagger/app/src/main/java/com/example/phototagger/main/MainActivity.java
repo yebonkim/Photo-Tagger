@@ -14,11 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.phototagger.R;
@@ -32,7 +31,6 @@ import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by yebonkim on 15/12/2018.
@@ -45,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mGalleryList;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.text_gallery_name)
-    TextView mGalleryName;
+
+    SearchView mSearchView;
 
     private final static String[] PERMISSION_LIST = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -54,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private ArrayList<Image> mAllImages;
-    private ArrayList<Gallery> mGalleries;
+    private ArrayList<Gallery> mAllGalleries;
     private GalleryAdapter mAdapter;
 
-    private PopupMenu mPopupMenu;
+    private boolean mIsAllGallerySet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,18 +64,33 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("");
-        mPopupMenu = new PopupMenu(getApplicationContext(), mGalleryName);
+        getSupportActionBar().setTitle(getString(R.string.allGallery));
 
         if (isPermitted()) {
             mAllImages = getAllImages();
-            mGalleries = splitByGallery(mAllImages);
-            setRecyclerView();
+            mAllGalleries = splitByGallery(mAllImages);
+            setRecyclerView(mAllGalleries);
+            mIsAllGallerySet = true;
         }
     }
 
-    private void setRecyclerView() {
-        mAdapter = new GalleryAdapter(mGalleries);
+    private SearchView.OnQueryTextListener mQueryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
+        @Override
+        public boolean onQueryTextChange(String query) {
+            if (query.isEmpty() && !mIsAllGallerySet) {
+                setRecyclerView(mAllGalleries);
+                mIsAllGallerySet = true;
+            }
+            return false;
+        }
+    };
+
+    private void setRecyclerView(ArrayList<Gallery> galleries) {
+        mAdapter = new GalleryAdapter(galleries);
         mGalleryList.setLayoutManager(new LinearLayoutManager(this));
         mGalleryList.setAdapter(mAdapter);
     }
@@ -168,32 +181,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToSlideActivity() {
         Intent intent = new Intent(this, SlideActivity.class);
-        intent.putExtra(IntentConstant.GALLERY, mGalleries.get(0));
+        intent.putExtra(IntentConstant.GALLERY, mAllGalleries.get(0));
         startActivity(intent);
-    }
-
-    @OnClick(R.id.layout_gallery_name)
-    public void popUpGalleryChangeMenu() {
-        getMenuInflater().inflate(R.menu.toolbar_title_menu, mPopupMenu.getMenu());
-        mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_all:
-                        break;
-                    case R.id.menu_photo_tagger:
-                        break;
-                }
-                mGalleryName.setText(item.getTitle());
-                return false;
-            }
-        });
-        mPopupMenu.show();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        mSearchView = (SearchView) mToolbar.getMenu().findItem(R.id.action_search).getActionView();
+        mSearchView.setOnQueryTextListener(mQueryTextListener);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -201,13 +198,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_slide:
-                if (mGalleries.size() == 0) {
+                if (mAllGalleries.size() == 0) {
                     Toast.makeText(this, R.string.noGallery, Toast.LENGTH_SHORT).show();
                 } else {
                     goToSlideActivity();
                 }
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
