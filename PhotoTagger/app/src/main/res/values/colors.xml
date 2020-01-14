@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-
-    <color name="ptGreen">#4EA17A</color>
-    <color name="ptPink">#FF4081</color>
-    <color name="ptPinkDark">#CC3E6F</color>
+    <color name="colorPrimary">#12497C</color>
+    <color name="colorPrimaryDark">#091D35</color>
+    <color name="colorAccent">#E5695C</color>
 
     <color name="backgroundGray">#cccccc</color>
     <color name="transparencyBlack">#aa000000</color>

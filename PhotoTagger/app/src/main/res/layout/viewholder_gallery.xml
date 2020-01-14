@@ -8,8 +8,8 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@color/ptGreen"
+        android:layout_height="40dp"
+        android:background="@color/colorAccent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="title"
-            android:textColor="#000000"
+            android:textColor="@color/white"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,12 +36,19 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/layout_title" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_title" />
+        app:layout_constraintTop_toBottomOf="@id/divider" />
 
 </android.support.constraint.ConstraintLayout>
