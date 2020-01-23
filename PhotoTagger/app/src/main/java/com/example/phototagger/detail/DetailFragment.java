@@ -85,10 +85,9 @@ public class DetailFragment extends Fragment {
         mNameText.setText(mData.getTitle());
         mLocationText.setText(mData.getLocation());
         mSizeText.setText(mData.getWidth() + " * " + mData.getHeight());
-        mTagText.setText(getTagString(mData.getTag()));
     }
 
-    protected String getTagString(ArrayList<String> tag) {
+    protected String formatTagString(ArrayList<String> tag) {
         String result = "";
 
         for(String tagStr : tag) {

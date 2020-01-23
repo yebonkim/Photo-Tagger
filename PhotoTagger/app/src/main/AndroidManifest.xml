@@ -25,10 +25,7 @@
         <activity android:name=".detail.DetailActivity">
         </activity>
         <activity android:name=".slide.SlideActivity"></activity>
-        <activity android:name=".detail.DetailEditActivity"
-            android:windowSoftInputMode="adjustPan"
-            >
-        </activity>
+
         <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
     </application>
 

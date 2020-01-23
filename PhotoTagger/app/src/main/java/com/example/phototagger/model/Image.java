@@ -15,13 +15,11 @@ public class Image implements Parcelable{
     private String mLocation;
     private String mWidth;
     private String mHeight;
-    private ArrayList<String> mTags;
 
     public Image(String location, String width, String height) {
         this.mLocation = location;
         this.mWidth = width;
         this.mHeight = height;
-        this.mTags = new ArrayList<>();
     }
 
     protected Image(Parcel in) {
@@ -30,7 +28,6 @@ public class Image implements Parcelable{
         mLocation = in.readString();
         mWidth = in.readString();
         mHeight = in.readString();
-        mTags = in.createStringArrayList();
     }
 
     @Override
@@ -40,7 +37,6 @@ public class Image implements Parcelable{
         dest.writeString(mLocation);
         dest.writeString(mWidth);
         dest.writeString(mHeight);
-        dest.writeStringList(mTags);
     }
 
     @Override
@@ -82,14 +78,6 @@ public class Image implements Parcelable{
 
     public void setHeight(String height) {
         this.mHeight = height;
-    }
-
-    public ArrayList<String> getTag() {
-        return mTags;
-    }
-
-    public void setTag(ArrayList<String> tag) {
-        this.mTags = tag;
     }
 
     public int getId() {

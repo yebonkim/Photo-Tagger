@@ -7,8 +7,6 @@
     <string name="slideAction">slide</string>
     <string name="calendarAction">calendar</string>
     <string name="searchAction">search</string>
-    <string name="editAction">edit</string>
-    <string name="doneAction">done</string>
     <string name="timeAction">time</string>
     <string name="cancelAction">cancel</string>
 
@@ -19,5 +17,7 @@
 
     <string name="noGallery">갤러리가 없어요.</string>
 
-    <string name="menu_search">사진 검색</string>
+    <string name="menu_search">사진 검색</string>'
+
+    <string name="msg_back_again">앱을 종료하려면 뒤로 버튼을 한 번더 눌러주세요.</string>
 </resources>

@@ -120,32 +120,4 @@ public class DetailActivity extends AppCompatActivity {
 
         }
     };
-
-    protected void goToEditActivity() {
-        Intent i = new Intent(DetailActivity.this, DetailEditActivity.class);
-        i.putExtra(IntentConstant.GALLERY, mGallery);
-        i.putExtra(IntentConstant.IMAGE_POSITION, mNowPageIdx);
-        startActivity(i);
-        finish();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.detail_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_edit:
-                goToEditActivity();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
 }
