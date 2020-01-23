@@ -34,7 +34,7 @@ public class S3Utils {
                         .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
                         .build();
 
-        TransferObserver uploadObserver = transferUtility.upload(file.getName(), file);
+        TransferObserver uploadObserver = transferUtility.upload(file.getAbsolutePath(), file);
 
         uploadObserver.setTransferListener(new TransferListener() {
 

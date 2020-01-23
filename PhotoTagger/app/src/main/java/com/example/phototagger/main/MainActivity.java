@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -24,13 +25,20 @@ import com.example.phototagger.R;
 import com.example.phototagger.common.IntentConstant;
 import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
+import com.example.phototagger.server.EsQueryResponse;
+import com.example.phototagger.server.ServerQuery;
 import com.example.phototagger.slide.SlideActivity;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by yebonkim on 15/12/2018.
@@ -53,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Image> mAllImages;
     private ArrayList<Gallery> mAllGalleries;
+    private ArrayList<Gallery> mQueriedGalleries;
     private GalleryAdapter mAdapter;
 
     private boolean mIsAllGallerySet;
@@ -66,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.allGallery));
 
+        mQueriedGalleries = new ArrayList<>();
+
         if (isPermitted()) {
             mAllImages = getAllImages();
             mAllGalleries = splitByGallery(mAllImages);
@@ -77,22 +88,100 @@ public class MainActivity extends AppCompatActivity {
     private SearchView.OnQueryTextListener mQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
+            if (query.isEmpty()) {
+                setRecyclerViewForEmptyQuery();
+            } else {
+                setRecyclerViewForQuery(query);
+            }
             return false;
         }
         @Override
         public boolean onQueryTextChange(String query) {
-            if (query.isEmpty() && !mIsAllGallerySet) {
-                setRecyclerView(mAllGalleries);
-                mIsAllGallerySet = true;
+            if (query.isEmpty()) {
+                setRecyclerViewForEmptyQuery();
             }
             return false;
         }
+
+        private void setRecyclerViewForEmptyQuery() {
+            if (!mIsAllGallerySet) {
+                setRecyclerView(mAllGalleries);
+                mIsAllGallerySet = true;
+            }
+        }
+
+        private void setRecyclerViewForQuery(String query) {
+            ServerQuery.queryPhotos(query, new Callback<EsQueryResponse>() {
+                @Override
+                public void onResponse(Call<EsQueryResponse> call, Response<EsQueryResponse> response) {
+                    if (response != null && response.body() != null) {
+                        EsQueryResponse queryResponse = response.body();
+                        Gallery gallery = innerHitsToGallery(query, queryResponse.getHits().getHits());
+                        mQueriedGalleries.clear();
+                        mQueriedGalleries.add(gallery);
+                        setRecyclerView(mQueriedGalleries);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<EsQueryResponse> call, Throwable t) {
+
+                }
+            });
+        }
+
+        private Gallery innerHitsToGallery(String query, List<EsQueryResponse.InnerHits> responses) {
+            ArrayList<Image> images = new ArrayList<>();
+            Image image;
+            Gallery gallery = new Gallery(query, true);
+
+            for (EsQueryResponse.InnerHits res : responses) {
+                image = pathToImage(res.getSource().getImageName());
+
+                if (image != null) {
+                    images.add(image);
+                }
+            }
+            gallery.setImages(images);
+            return gallery;
+        }
     };
+
+    @NonNull
+    private Image pathToImage(@NonNull String imagePath) {
+        File file = new File(imagePath);
+        Image newImage;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        if (!file.exists()) {
+            return null;
+        }
+
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+        newImage = new Image(imagePath, options.outWidth + "", options.outHeight + "");
+        newImage.setTitle(getImageNameFromPath(imagePath));
+
+        return newImage;
+    }
 
     private void setRecyclerView(ArrayList<Gallery> galleries) {
         mAdapter = new GalleryAdapter(galleries);
         mGalleryList.setLayoutManager(new LinearLayoutManager(this));
         mGalleryList.setAdapter(mAdapter);
+    }
+
+    @NonNull
+    private String getImageNameFromPath(@NonNull String path) {
+        StringTokenizer stk = new StringTokenizer(path, "/");
+        int galleryIdx = stk.countTokens() - 1;
+        String result = "";
+
+        for (int i = 0; i <= galleryIdx; i++) {
+            result = stk.nextToken();
+        }
+
+        return result;
     }
 
     private ArrayList<Gallery> splitByGallery(@NonNull ArrayList<Image> allImages) {
