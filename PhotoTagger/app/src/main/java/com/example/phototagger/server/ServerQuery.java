@@ -4,7 +4,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ServerQuery {
-    public static void queryPhotos(String query, Callback<EsQueryResponse> callback) {
+    public static void queryToES(String query, Callback<EsQueryResponse> callback) {
         Call<EsQueryResponse> call = ServiceGenerator.createService(ServerAPI.class).queryPhotos(query);
         call.enqueue(callback);
     }

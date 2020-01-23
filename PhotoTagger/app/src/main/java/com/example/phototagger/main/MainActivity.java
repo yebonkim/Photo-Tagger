@@ -46,6 +46,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private final static String INVALID_GALLERY_NAME = "INVALID_GALLERY_NAME";
+    private final static int DOUBLE_BACK_KEY_INTERVAL_TIME = 2000;
 
     @BindView(R.id.list_gallery)
     RecyclerView mGalleryList;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mIsAllGallerySet;
 
+    private long mBackPressedTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
         if (isPermitted()) {
             mAllImages = getAllImages();
             mAllGalleries = splitByGallery(mAllImages);
-            setRecyclerView(mAllGalleries);
-            mIsAllGallerySet = true;
+            setRecyclerView(mAllGalleries, true);
         }
     }
 
@@ -105,13 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
         private void setRecyclerViewForEmptyQuery() {
             if (!mIsAllGallerySet) {
-                setRecyclerView(mAllGalleries);
-                mIsAllGallerySet = true;
+                setRecyclerView(mAllGalleries, true);
             }
         }
 
         private void setRecyclerViewForQuery(String query) {
-            ServerQuery.queryPhotos(query, new Callback<EsQueryResponse>() {
+            ServerQuery.queryToES(query, new Callback<EsQueryResponse>() {
                 @Override
                 public void onResponse(Call<EsQueryResponse> call, Response<EsQueryResponse> response) {
                     if (response != null && response.body() != null) {
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         Gallery gallery = innerHitsToGallery(query, queryResponse.getHits().getHits());
                         mQueriedGalleries.clear();
                         mQueriedGalleries.add(gallery);
-                        setRecyclerView(mQueriedGalleries);
+                        setRecyclerView(mQueriedGalleries, false);
                     }
                 }
 
@@ -165,10 +166,11 @@ public class MainActivity extends AppCompatActivity {
         return newImage;
     }
 
-    private void setRecyclerView(ArrayList<Gallery> galleries) {
+    private void setRecyclerView(ArrayList<Gallery> galleries, boolean isAllGallerySet) {
         mAdapter = new GalleryAdapter(galleries);
         mGalleryList.setLayoutManager(new LinearLayoutManager(this));
         mGalleryList.setAdapter(mAdapter);
+        mIsAllGallerySet = isAllGallerySet;
     }
 
     @NonNull
@@ -272,6 +274,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SlideActivity.class);
         intent.putExtra(IntentConstant.GALLERY, mAllGalleries.get(0));
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!mIsAllGallerySet) {
+            setRecyclerView(mAllGalleries, true);
+        } else {
+            if (System.currentTimeMillis() - mBackPressedTime  < DOUBLE_BACK_KEY_INTERVAL_TIME) {
+                finish();
+            } else {
+                mBackPressedTime = System.currentTimeMillis();
+                Toast.makeText(this, getString(R.string.msg_back_again), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

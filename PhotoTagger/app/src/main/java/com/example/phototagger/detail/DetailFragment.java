@@ -2,8 +2,6 @@ package com.example.phototagger.detail;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +12,16 @@ import com.bumptech.glide.Glide;
 import com.example.phototagger.R;
 import com.example.phototagger.common.IntentConstant;
 import com.example.phototagger.model.Image;
+import com.example.phototagger.server.EsQueryResponse;
+import com.example.phototagger.server.ServerQuery;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  *
@@ -62,6 +64,7 @@ public class DetailFragment extends Fragment {
         } else {
             mData = null;
         }
+        getTagFromEs();
     }
 
     @Override
@@ -79,6 +82,27 @@ public class DetailFragment extends Fragment {
         return view;
     }
 
+    private void getTagFromEs() {
+        ServerQuery.queryToES(mData.getTitle(), new Callback<EsQueryResponse>() {
+            @Override
+            public void onResponse(Call<EsQueryResponse> call, Response<EsQueryResponse> response) {
+                if (response != null && response.body() != null) {
+                    EsQueryResponse queryResponse = response.body();
+                    EsQueryResponse.InnerHits hit = queryResponse.getHits().getMaxScoreHit();
+
+                    if (hit != null) {
+                        setTagText(formatTagString(hit.getSource().getLabels()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EsQueryResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
     protected void setView() {
         Glide.with(getContext()).load(mData.getLocation()).into(mImage);
 
@@ -87,14 +111,24 @@ public class DetailFragment extends Fragment {
         mSizeText.setText(mData.getWidth() + " * " + mData.getHeight());
     }
 
-    protected String formatTagString(ArrayList<String> tag) {
-        String result = "";
+    protected void setTagText(String tags) {
+        mTagText.setText(tags);
+    }
 
-        for(String tagStr : tag) {
-            result += "#" + tagStr + ", ";
+    protected String formatTagString(List<String> tag) {
+        StringBuilder builder = new StringBuilder();
+
+        if (tag.size() == 0) {
+            return builder.toString();
         }
 
-        return result;
+        for(String tagStr : tag) {
+            builder.append("#");
+            builder.append(tagStr);
+            builder.append(", ");
+        }
+
+        return builder.substring(0, builder.length() - 2);
     }
 
 }
