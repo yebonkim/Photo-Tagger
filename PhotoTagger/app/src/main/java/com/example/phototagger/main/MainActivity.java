@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         StringTokenizer stk;
         String preGalleryName = INVALID_GALLERY_NAME;
         String galleryName = INVALID_GALLERY_NAME;
-        int galleryIdx;
+        int galleryNameIdx;
         Gallery gallery = null;
 
         boolean isFirst = true;     // for opening only first gallery
@@ -199,9 +199,9 @@ public class MainActivity extends AppCompatActivity {
 
         for (Image image : allImages) {
             stk = new StringTokenizer(image.getLocation(), "/");
-            galleryIdx = stk.countTokens() - 2;
+            galleryNameIdx = stk.countTokens() - 2;
 
-            for (int i = 0; i <= galleryIdx; i++) {
+            for (int i = 0; i <= galleryNameIdx; i++) {
                 galleryName = stk.nextToken();
             }
 

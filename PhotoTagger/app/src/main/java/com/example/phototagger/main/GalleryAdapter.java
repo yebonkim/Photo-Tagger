@@ -154,10 +154,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void setAdapter() {
-            if (mAdapter != null) {
-                return;
-            }
-
             mEndlessScrollListener = new EndlessScrollListener(mGridLayoutManager) {
                 @Override
                 public void onLoadMore(int totalItemsCount, int visibleThreshold, RecyclerView view) {
