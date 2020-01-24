@@ -31,6 +31,7 @@ PhotoTagger는 머신러닝을 통해 사진안의 Object를 인식하여 사진
     implementation 'com.squareup.retrofit2:retrofit:2.7.1'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
