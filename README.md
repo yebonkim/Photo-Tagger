@@ -84,7 +84,7 @@ PhotoTagger는 머신러닝을 통해 사진안의 Object를 인식하여 사진
 - [x] 안드로이드에서 S3로 이미지 전송
 - [ ] 안드로이드에서 S3에 있는 파일인지 확인
 - [x] Galley 나누기 버그
-- [ ] 슬라이드쇼 Interval 버튼 이미지 안바뀌는 버그
+- [x] 슬라이드쇼 Interval 버튼 이미지 안바뀌는 버그
 - [x] S3 to Rekognition Lambda 생성
 - [x] Elastic Search 추가
 - [x] AddToES Lambda 생성

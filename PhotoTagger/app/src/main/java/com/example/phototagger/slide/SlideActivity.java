@@ -11,7 +11,6 @@ import android.view.MenuItem;
 
 import com.example.phototagger.R;
 import com.example.phototagger.common.IntentConstant;
-import com.example.phototagger.main.MainActivity;
 import com.example.phototagger.model.Gallery;
 import com.example.phototagger.model.Image;
 
@@ -25,6 +24,9 @@ import butterknife.ButterKnife;
  */
 
 public class SlideActivity extends AppCompatActivity {
+    private final static int[] SLIDE_TIMES = {1000, 3000, 5000};
+    private final static int[] TIME_MENU_DRAWABLES = {R.drawable.ic_one, R.drawable.ic_three, R.drawable.ic_five};
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.viewPager)
@@ -32,7 +34,7 @@ public class SlideActivity extends AppCompatActivity {
 
     private SlideViewPageAdapter mAdapter;
 
-    private long mSlideTime = 1000;
+    private int mSlideTimeIdx = 0;
 
     private Gallery mGallery;
     private int mImageIdx;
@@ -56,10 +58,10 @@ public class SlideActivity extends AppCompatActivity {
                 if (mImageIdx < mGallery.getImages().size() - 1) {
                     mImageIdx++;
                     mViewPager.setCurrentItem(mImageIdx);
-                    mHandler.postDelayed(this, mSlideTime);
+                    mHandler.postDelayed(this, SLIDE_TIMES[mSlideTimeIdx]);
                 }
             }
-        }, mSlideTime);
+        }, SLIDE_TIMES[mSlideTimeIdx]);
     }
 
     private void getIntentConstant() {
@@ -98,24 +100,19 @@ public class SlideActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_time:
-                // User chose the "Settings" item, show the app settings UI...
-                if (mSlideTime == 1000) {
-                    mSlideTime = 3000;
-                } else if (mSlideTime == 3000) {
-                    mSlideTime = 5000;
-                } else if (mSlideTime == 5000) {
-                    mSlideTime = 1000;
+                if (mSlideTimeIdx < SLIDE_TIMES.length - 1) {
+                    mSlideTimeIdx++;
+                } else {
+                    mSlideTimeIdx = 0;
                 }
+                item.setIcon(TIME_MENU_DRAWABLES[mSlideTimeIdx]);
                 return true;
 
             case R.id.action_cancel:
-                // User chose the "Settings" item, show the app settings UI...
                 goToMainActivity();
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
     }
